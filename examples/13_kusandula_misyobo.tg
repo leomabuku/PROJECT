@@ -1,0 +1,13 @@
+// Milimo yakujana cipati, ciniini, musyobo, akusandula
+
+mulimo matalikilo() {
+    zina mabala_anamba = "42"
+    zina yasandulwa = namba(mabala_anamba)
+
+    amba("Yasandulwa akuyungizya 8: " + (yasandulwa + 8))
+    amba("Cipati ca 12 a 30: " + mpati(12, 30))
+    amba("Ciniini ca 12 a 30: " + inini(12, 30))
+    amba("Yasandulwa ninamba? " + ninamba(yasandulwa))
+    amba("Mabala anamba ngamabala? " + ngamabala(mabala_anamba))
+    amba("Namba yasandulwa kuba mabala: " + mabala(100))
+}

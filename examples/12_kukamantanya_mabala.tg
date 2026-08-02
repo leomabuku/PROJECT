@@ -1,0 +1,14 @@
+// Kuyungizya mabala kusebenzya $zyina naa ${zyina}
+/*
+   Mulimo ooyu ulalangizya tubbaluzi, kuyungizya mazyina,
+   akukamantanya mabala.
+*/
+
+mulimo matalikilo() {
+    zina zyina = "TongaLang"
+    zina musyobo = 1
+
+    amba("Mwabonwa ku $zyina")
+    amba("Musyobo ${musyobo}")
+    amba("Kukamantanya kulabeleka: " + zyina + " " + musyobo)
+}

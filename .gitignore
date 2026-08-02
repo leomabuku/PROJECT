@@ -1,0 +1,35 @@
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+coverage.json
+htmlcov/
+test-results/
+.codex_tmp/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE/project metadata
+.idea/
+.vscode/
+
+# Build and packaging output
+build/
+dist/
+*.spec
+
+# PLY generated parser artifacts
+parser.out
+parsetab.py
+tongalang/parser.out
+tongalang/parsetab.py
+
+# Local scratch files
+test_lexer_manual.py
+
+# Private academic working files
+*.docx

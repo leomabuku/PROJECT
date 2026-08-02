@@ -1,0 +1,8 @@
+mulimo matalikilo() {
+    zina namba = 0
+
+    kufumbwa (namba ceya 5) {
+        amba(namba)
+        namba = namba + 1
+    }
+}

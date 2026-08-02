@@ -1,0 +1,13 @@
+// Kubandika namba kusikila kuyomwe akusebenzya kufumbwa
+
+mulimo matalikilo() {
+    zina n = 5
+    zina mupinduzi = 1
+
+    kufumbwa (n inda 1) {
+        mupinduzi = mupinduzi * n
+        n = n - 1
+    }
+
+    amba("Mupinduzi: " + mupinduzi)
+}

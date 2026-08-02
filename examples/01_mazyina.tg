@@ -1,0 +1,12 @@
+zina zyina_lyamulimo = "TongaLang"
+
+mulimo matalikilo() {
+    zina zyina = "Leo"
+    zina myaka = 20
+    zina musikwiiya = iiyi
+
+    amba("Mulimo: " + zyina_lyamulimo)
+    amba("Zyina: " + zyina)
+    amba("Myaka: " + myaka)
+    amba("Musikwiiya: " + musikwiiya)
+}

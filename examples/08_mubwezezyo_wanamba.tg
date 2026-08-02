@@ -1,0 +1,21 @@
+// Mubwezezyo wa namba akweelanya
+
+mulimo matalikilo() {
+    zina a = 18
+    zina b = 5
+
+    amba("=== Mubwezezyo wa namba ===")
+    amba("a = " + a)
+    amba("b = " + b)
+    amba("a + b = " + (a + b))
+    amba("a - b = " + (a - b))
+    amba("a * b = " + (a * b))
+    amba("a / b = " + (a / b))
+    amba("a % b = " + (a % b))
+
+    kuti (a inda b) {
+        amba("a njipati kubikkilizya b")
+    } nakunyina {
+        amba("a tee mpati kubikkilizya b")
+    }
+}

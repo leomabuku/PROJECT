@@ -1,0 +1,24 @@
+mulimo yungizya(a, b) {
+    pilula a + b
+}
+
+mulimo jana_mpati(x, y) {
+    zina mupinduzi = mpati(x, y)
+    pilula mupinduzi
+}
+
+mulimo matalikilo() {
+    zina zyoonse = yungizya(10, 20)
+    amba("Zyoonse: " + zyoonse)
+
+    zina cipati = jana_mpati(45, 99)
+    amba("Cipati: " + cipati)
+
+    zina kasimpe = ninamba(zyoonse)
+
+    kuti (kasimpe eelana iiyi) {
+        amba("Iyi namba njakulondoka")
+    } nakunyina {
+        amba("Iyi tee namba yakulondoka")
+    }
+}

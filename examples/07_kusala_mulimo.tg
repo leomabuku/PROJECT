@@ -1,0 +1,27 @@
+mulimo yungizya(a, b) {
+    pilula a + b
+}
+
+mulimo gusya(a, b) {
+    pilula a - b
+}
+
+
+mulimo matalikilo() {
+    amba("=== Kusala mulimo wa TongaLang ===")
+    amba("1. Yungizya")
+    amba("2. Gusya")
+
+    zina cisalidwe = bala("Amusale namba: ")
+    zina a = 10
+    zina b = 5
+    kuti (cisalidwe eelana 1) {
+        zina mupinduzi = yungizya(a, b)
+        amba("Mupinduzi wakuyungizya: " + mupinduzi)
+    } naaba (cisalidwe eelana 2) {
+        zina mupinduzi = gusya(a, b)
+        amba("Mupinduzi wakugusya: " + mupinduzi)
+    } nakunyina {
+        amba("Cisalidwe tacakulondoka")
+    }
+}

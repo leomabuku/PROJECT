@@ -1,0 +1,13 @@
+// Cilangililo cambaka akucinca zina lili aanze
+
+mulimo matalikilo() {
+    zina zyoonse = 0
+
+    induluka i kuzwa 1 kusika 4 {
+        zina zyabili = i * 2
+        zyoonse = zyoonse + zyabili
+        amba(i + " kubandika tubili ndi " + zyabili)
+    }
+
+    amba("Zyoonse aakumamanino: " + zyoonse)
+}

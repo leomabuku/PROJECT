@@ -1,0 +1,13 @@
+mulimo matalikilo() {
+    amba("Kuzwa asyoonto kuya kumpati:")
+
+    induluka i kuzwa 1 kusika 5 {
+        amba(i)
+    }
+
+    amba("Kuzwa kumpati kuya asyoonto:")
+
+    induluka j kuzwa 5 kusika 1 {
+        amba(j)
+    }
+}

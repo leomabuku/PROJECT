@@ -1,0 +1,14 @@
+// Milimo ilakonzya kwitwa kayitanazibikidwa ansi afayilo
+
+mulimo matalikilo() {
+    amba("Bupati bwambali zyoonse: " + bupati_bwacikombelo(6, 4))
+    amba("Bule bwakusyunguluka: " + bule_bwakusyunguluka(6, 4))
+}
+
+mulimo bupati_bwacikombelo(bule, musanza) {
+    pilula bule * musanza
+}
+
+mulimo bule_bwakusyunguluka(bule, musanza) {
+    pilula (bule + musanza) * 2
+}

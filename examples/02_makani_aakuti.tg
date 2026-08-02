@@ -1,0 +1,11 @@
+mulimo matalikilo() {
+    zina myaka = 18
+
+    kuti (myaka inda 18) {
+        amba("Muntu mupati")
+    } naaba (myaka eelana 18) {
+        amba("Wasika amyakka iili kkumi amusanu atatu")
+    } nakunyina {
+        amba("Mwana")
+    }
+}

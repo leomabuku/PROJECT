@@ -1,0 +1,14 @@
+// Kweelanya iiyi, pepe, aa, naa, atee
+
+mulimo matalikilo() {
+    zina walipila = iiyi
+    zina ulijisi_citupa = pepe
+
+    kuti (walipila aa tee ulijisi_citupa) {
+        amba("Walipila, pele kunyina citupa")
+    }
+
+    kuti (walipila naa ulijisi_citupa) {
+        amba("Cimwi cisyomezyo nciini")
+    }
+}

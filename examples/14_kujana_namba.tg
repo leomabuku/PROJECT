@@ -1,0 +1,14 @@
+// Kujana namba akusebenzya induluka aleka
+
+mulimo matalikilo() {
+    zina yayandwa = 4
+
+    induluka namba kuzwa 1 kusika 10 {
+        amba("Kusola " + namba)
+
+        kuti (namba eelana yayandwa) {
+            amba("Yajanika namba: " + namba)
+            leka
+        }
+    }
+}

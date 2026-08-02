@@ -1,0 +1,15 @@
+// Kusola musyobo wabupanduluzi akusebenzya bala, kuti, anamba
+
+mulimo matalikilo() {
+    zina cipimo = bala("Amupe cipimo kuzwa ku 0 kusika ku 100: ")
+
+    kuti (cipimo >= 70) {
+        amba("Bupanduluzi: Kabotu loko")
+    } naaba (cipimo >= 60) {
+        amba("Bupanduluzi: Kabotu")
+    } naaba (cipimo >= 50) {
+        amba("Bupanduluzi: Wazwidilila")
+    } nakunyina {
+        amba("Bupanduluzi: Kobweza alimwi")
+    }
+}

@@ -1,0 +1,12 @@
+// Kuinduluka mukati kakuinduluka mukubandika namba
+
+mulimo matalikilo() {
+    amba("=== Cibalo cakubandika namba ===")
+
+    induluka mulongo kuzwa 1 kusika 3 {
+        induluka cibalo kuzwa 1 kusika 4 {
+            amba(mulongo + " x " + cibalo + " = " + (mulongo * cibalo))
+        }
+        amba()
+    }
+}
