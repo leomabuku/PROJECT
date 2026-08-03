@@ -12,6 +12,25 @@ The language intentionally keeps a small surface area:
 - A required main entry point: `mulimo matalikilo() { ... }`
 - Range-based `induluka` loops instead of C-style `for` loops
 
+## Latest Project Evidence
+
+Updated **3 August 2026**. The current build includes a redesigned educational
+IDE, interactive program input, a source-linked AST explorer, bilingual error
+feedback, and a failure-discovery Test Lab.
+
+![TongaLang source editor](docs/media/source-editor.png)
+
+| AST explorer | Failure-discovery Test Lab |
+| --- | --- |
+| ![Source-linked TongaLang AST explorer](docs/media/ast-explorer.png) | ![TongaLang Test Lab with all checks passing](docs/media/test-lab.png) |
+
+[Watch the one-minute TongaLang IDE walkthrough](docs/media/tongalang-demo.mp4).
+The web-ready recording is derived from the original 1080p capture so the
+repository remains fast to clone.
+
+See [the dated project changelog](docs/CHANGELOG.md) for a concise record of the
+published implementation.
+
 ## Project Structure
 
 ```text
