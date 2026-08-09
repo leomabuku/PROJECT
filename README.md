@@ -14,19 +14,29 @@ The language intentionally keeps a small surface area:
 
 ## Latest Project Evidence
 
-Updated **3 August 2026**. The current build includes a redesigned educational
-IDE, interactive program input, a source-linked AST explorer, bilingual error
-feedback, and a failure-discovery Test Lab.
+Updated **9 August 2026**. The current build adds side-effect-free beginner
+diagnostics, guarded one-click fixes, semantic keyword colours, and a shared
+Problems/Program Input dock while retaining the source-linked AST explorer and
+failure-discovery Test Lab. The complete automated suite contains 179 passing
+tests.
 
 ![TongaLang source editor](docs/media/source-editor.png)
+
+| Guided Problems and safe fixes | Program Input beside live output |
+| --- | --- |
+| ![TongaLang Problems dock with an editable suggestion](docs/media/beginner-diagnostics.png) | ![TongaLang Program Input dock while bala waits](docs/media/program-input.png) |
+
+| Scrollable Settings | Structured project guide |
+| --- | --- |
+| ![Grouped TongaLang settings with semantic colours](docs/media/settings-guidance.png) | ![TongaLang About guide](docs/media/about-guide.png) |
 
 | AST explorer | Failure-discovery Test Lab |
 | --- | --- |
 | ![Source-linked TongaLang AST explorer](docs/media/ast-explorer.png) | ![TongaLang Test Lab with all checks passing](docs/media/test-lab.png) |
 
-[Watch the one-minute TongaLang IDE walkthrough](docs/media/tongalang-demo.mp4).
-The web-ready recording is derived from the original 1080p capture so the
-repository remains fast to clone.
+[Watch the 52-second, captioned TongaLang IDE walkthrough](docs/media/tongalang-demo.mp4).
+The silent H.264 recording is 1280×720 and remains under 8 MB for fast playback
+from GitHub and the portfolio case study.
 
 See [the dated project changelog](docs/CHANGELOG.md) for a concise record of the
 published implementation.
@@ -243,12 +253,16 @@ python -m gui.app
 The GUI is designed for project demonstrations and includes:
 
 - A modern editor with line numbers, current-line highlighting, and syntax highlighting
+- Live beginner diagnostics in a collapsible Problems pane, with exact source locations and guarded one-click fixes
+- A shared Problems/Program Input dock that stays available in Editor and Output
 - Dark and light themes
-- A collapsible navigation sidebar
-- Dedicated Editor, Output, Input / I/O, AST, Console, Settings, and About views
-- Interactive pause/resume input for `bala()`
+- Back and Forward history plus a collapsible navigation sidebar
+- Dedicated Editor, Output, AST, Console, Settings, Grammar, and About views
+- Interactive pause/resume input for `bala()` with submitted values echoed into Output
 - A zoomable, pannable AST diagram with visible parent-child connectors, colour-coded node roles, source links, search, and an accessible outline
 - Internal console logs for tokenizing, parsing, AST generation, execution, input, and errors
+- Scrollable, grouped Settings and About pages with mouse-wheel, touchpad, and keyboard scrolling
+- Semantic reserved-word colors for declarations, input/output, conditions, loops, functions, the main entry point, booleans, and word operators
 - Syntax color customization from Settings
 - Open and save actions for `.tg` files
 
@@ -258,6 +272,7 @@ The IDE layer is split into focused modules:
 
 - `gui/language_profile.py` reads the real lexer reserved-word table and native function registry so the GUI knows the implemented language.
 - `gui/syntax_highlighter.py` applies theme-aware, customizable highlighting to the editor.
+- `tongalang/diagnostics.py` performs side-effect-free lexical, syntax, and semantic checks and creates guarded source fixes.
 - `gui/runtime.py` provides the thread-safe input pause/resume bridge used when the interpreter calls `bala()`.
 - `gui/ast_tree.py` converts AST nodes into educational rows and detail text.
 - `gui/ast_canvas.py` lays out and draws the interactive parent-child tree diagram.
@@ -269,10 +284,14 @@ When a running program reaches `bala()`:
 
 1. Execution pauses in the background worker thread.
 2. The IDE state changes to `Waiting for input`.
-3. The Input / I/O view opens automatically.
-4. The user enters a value and presses Submit.
-5. The value is passed back to the interpreter.
-6. Execution resumes and already-printed output is preserved.
+3. Output remains visible and the shared dock opens Program Input automatically.
+4. The user enters a value and selects Submit Input or presses Enter.
+5. The prompt and submitted value are recorded in Output.
+6. The value is passed back to the interpreter, the dock collapses, and execution resumes.
+
+Problems remains the preset dock view. Learners can inspect diagnostics while a
+program waits without cancelling the pending input; the Program Input selector
+continues showing that a value is required.
 
 This gives `bala()` a live terminal-like experience without changing the
 TongaLang interpreter semantics.
@@ -280,7 +299,9 @@ TongaLang interpreter semantics.
 ### Syntax Highlighting
 
 Syntax highlighting is generated from the implementation, not a separate
-hand-written language list. The GUI detects:
+hand-written language list. Reserved words are grouped by their role so a
+beginner can distinguish declarations, input/output, decisions, loops,
+functions, `matalikilo`, booleans, and word operators at a glance. The GUI also detects:
 
 - keywords from `tongalang/lexer.py`
 - booleans from the `BOOL` token mapping
@@ -289,9 +310,9 @@ hand-written language list. The GUI detects:
 - native functions from `tongalang/native_functions.py`
 - identifiers, function calls, numbers, strings, and comments
 
-Settings allows users to customize colors for keywords, strings, comments,
-numbers, native functions, operators, current line, error line, and AST
-highlight colors. Reset Defaults restores the built-in theme colors.
+Settings allows users to customize every semantic group plus strings,
+comments, numbers, native functions, operators, current line, error line, and
+AST highlight colors. Reset Defaults restores the accessible built-in palettes.
 
 ### AST and Console Views
 

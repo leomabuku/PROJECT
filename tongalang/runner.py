@@ -5,7 +5,7 @@ from typing import Optional
 
 from .parser import parse_source
 from .interpreter import Interpreter
-from .errors import SourceEncodingError, SourceReadError, TongaLangError
+from .errors import SourceEncodingError, SourceNotFoundError, SourceReadError, TongaLangError
 
 
 def run_source(
@@ -47,10 +47,10 @@ def run_file(
     path = Path(file_path)
 
     if not path.exists():
-        raise FileNotFoundError(f'TongaLang file not found: "{path}"')
+        raise SourceNotFoundError(path)
 
     if not path.is_file():
-        raise FileNotFoundError(f'TongaLang path is not a file: "{path}"')
+        raise SourceNotFoundError(path)
 
     try:
         source = path.read_text(encoding="utf-8")
@@ -122,16 +122,8 @@ def safe_run_file(
         )
         return True
 
-    except FileNotFoundError as error:
-        print("[TL-F101] Source-file error")
-        print("Mulubizyo: Fayilo taiyajanika.")
-        print(f"Error: {error}")
-        print("Langulukila: Bona kuti izina ya fayilo yalembwa kabotu.")
-        print("Hint: Check that the file path is correct.")
-        return False
-
     except TongaLangError as error:
-        print(error)
+        print(error.format_message())
         return False
 
     except Exception as error:

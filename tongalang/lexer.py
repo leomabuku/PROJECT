@@ -146,6 +146,7 @@ def _error_at_token(
     hint_tonga: str | None = None,
     hint_english: str | None = None,
     code: str = "TL-L001",
+    details: dict | None = None,
 ):
     source = getattr(t.lexer, "lexdata", "")
     column = find_column(source, t.lexpos)
@@ -158,6 +159,7 @@ def _error_at_token(
         line=t.lexer.lineno,
         column=column,
         code=code,
+        details={"raw_text": str(t.value), **(details or {})},
     )
 
 
@@ -242,6 +244,7 @@ def t_UNTERMINATED_BLOCK_COMMENT(t):
         hint_tonga="Bikka */ aamamanino aakambonyi.",
         hint_english="Add */ at the end of the block comment.",
         code="TL-L105",
+        details={"missing": "*/"},
     )
 
 
@@ -297,6 +300,7 @@ def t_STRING(t):
                 line=t.lexer.lineno,
                 column=column,
                 code="TL-L104",
+                details={"escape": f"\\{escaped}", "raw_text": f"\\{escaped}"},
             )
         decoded.append(escapes[escaped])
         index += 2
@@ -362,6 +366,7 @@ def t_SEMICOLON_ERROR(t):
         hint_tonga="Leka kulemba semicolon kumamanino aa statement.",
         hint_english="Remove the semicolon at the end of the statement.",
         code="TL-L102",
+        details={"replacement": ""},
     )
 
 
@@ -374,6 +379,7 @@ def t_UNTERMINATED_STRING(t):
         hint_tonga='Bikka quote yakumamanino: ".',
         hint_english='Add a closing quotation mark: ".',
         code="TL-L103",
+        details={"missing": '"'},
     )
 
 
@@ -390,6 +396,7 @@ def t_error(t):
         english_message=f'Illegal character "{bad_char}" in TongaLang source code.',
         hint_tonga="Bona kuti walemba chizindikilo chizumizidwe.",
         hint_english="Check that you used a valid TongaLang symbol or character.",
+        details={"bad_character": bad_char},
     )
 
 

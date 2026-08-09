@@ -71,10 +71,18 @@ def _syntax_error_from_token(token):
             line=len(lines),
             column=len(lines[-1]) + 1,
             code="TL-S101",
+            details={"unexpected_eof": True},
         )
 
     source = getattr(token.lexer, "lexdata", source)
     column = find_column(source, token.lexpos)
+    line_end = source.find("\n", token.lexpos)
+    if line_end < 0:
+        line_end = len(source)
+    raw_tail = source[token.lexpos:line_end]
+    raw_text = raw_tail.split(maxsplit=1)[0] if raw_tail else str(token.value)
+    if token.type in {"LPAREN", "RPAREN", "LBRACE", "RBRACE", "COMMA"}:
+        raw_text = source[token.lexpos:token.lexpos + 1]
 
     hint_tonga = "Bona mubambilo wa statement ili afwafwi awa."
     hint_english = "Check the statement grammar near this location."
@@ -96,6 +104,12 @@ def _syntax_error_from_token(token):
         line=token.lineno,
         column=column,
         code="TL-S102",
+        details={
+            "token_type": token.type,
+            "token_value": str(token.value),
+            "raw_text": raw_text,
+            "suggestion": suggestion if token.type == "IDENT" and matches else None,
+        },
     )
 
 

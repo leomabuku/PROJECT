@@ -661,6 +661,7 @@ class Interpreter:
 
         name = expr.callee.lower()
         args = [self._eval(arg, env) for arg in expr.arguments]
+        line, column = self._line_col(expr)
 
         # Built-in input function.
         if name == "bala":
@@ -670,10 +671,13 @@ class Interpreter:
         if name in NATIVE_FUNCTIONS:
             try:
                 return NATIVE_FUNCTIONS[name](args)
-            except TongaRuntimeError:
+            except TongaRuntimeError as error:
+                if error.line is None:
+                    error.line = line
+                if error.column is None:
+                    error.column = column
                 raise
             except TypeError:
-                line, column = self._line_col(expr)
                 raise TongaRuntimeError(
                     tonga_message=f'Mulimo wa "{name}" wafilwa kusebenzya ma arguments aya.',
                     english_message=f'Native function "{name}" could not process these arguments.',
@@ -687,8 +691,8 @@ class Interpreter:
         if name in self.functions:
             return self._call_user_function(name, args, expr)
 
-        line, column = self._line_col(expr)
-        raise FunctionNotDefinedError(name, line=line, column=column)
+        candidates = tuple(self.functions) + tuple(NATIVE_FUNCTIONS) + ("bala",)
+        raise FunctionNotDefinedError(name, line=line, column=column, candidates=candidates)
 
     # ========================================================
     # Function Calls

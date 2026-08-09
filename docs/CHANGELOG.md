@@ -1,5 +1,27 @@
 # TongaLang Project Changelog
 
+## 9 August 2026
+
+### Beginner guidance and recovery
+
+- Added side-effect-free live lexical, syntax, and semantic diagnostics with bilingual explanations, exact source ranges, and guarded one-click fixes for deterministic mistakes.
+- Added a collapsible Problems pane with Go to Code, Copy Details, keyboard navigation, stale-edit protection, and undoable source repairs.
+- Added typed source-file diagnostics and kept unexpected internal details behind an explicit copy action.
+
+### IDE usability
+
+- Added Back and Forward view history while preserving the independently collapsible navigation menu.
+- Added one shared, resizable Problems/Program Input dock for Editor and Output. `bala()` requests open Program Input automatically, submitted values are echoed into Output, and execution resumes after a single guarded queue handoff.
+- Removed the duplicate Input/I/O page and Output input bar so there is one clear input workflow.
+- Rebuilt Settings as grouped, collapsible, scrollable sections with mouse-wheel, touchpad, Linux wheel, and keyboard scrolling plus inline numeric validation.
+- Rebuilt About as themed, readable sections covering the author, academic context, project purpose, architecture, quick start, features, language overview, and safety scope.
+- Added accessible dark/light semantic colors for declarations, input/output, conditions, loops, functions, the main entry point, booleans, and word operators.
+
+### Verification
+
+- Restored the two runnable examples used during typo testing and moved the mistakes into dedicated automated diagnostic tests.
+- Expanded the suite to cover fixes, stale edits, live-analysis safety, color contrast, navigation, scrolling, About content, dock persistence, blank and repeated input, visible transcripts, safe stop, and GUI recovery workflows.
+
 ## 3 August 2026
 
 This entry documents the current public implementation and the supporting
