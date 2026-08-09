@@ -18,8 +18,11 @@ class LanguageProfile:
     assignment_operators: tuple[str, ...]
     grouping_symbols: tuple[str, ...]
     native_functions: tuple[str, ...]
+    declaration_words: tuple[str, ...]
     input_output_words: tuple[str, ...]
+    conditional_words: tuple[str, ...]
     function_words: tuple[str, ...]
+    entry_point_words: tuple[str, ...]
     loop_words: tuple[str, ...]
     return_words: tuple[str, ...]
 
@@ -131,8 +134,11 @@ def build_language_profile() -> LanguageProfile:
         assignment_operators=assignment,
         grouping_symbols=grouping,
         native_functions=tuple(sorted(NATIVE_FUNCTIONS.keys())),
+        declaration_words=_reserved_words_for("ZINA"),
         input_output_words=_reserved_words_for("AMBA", "BALA"),
-        function_words=_reserved_words_for("MULIMO", "MATALIKILO"),
+        conditional_words=_reserved_words_for("KUTI", "NAABA", "NAKUNYINA"),
+        function_words=_reserved_words_for("MULIMO", "PILULA"),
+        entry_point_words=_reserved_words_for("MATALIKILO"),
         loop_words=_reserved_words_for("KUFUMBWA", "INDULUKA", "KUZWA", "KUSIKA", "CITA", "KUSIKILA", "LEKA"),
         return_words=_reserved_words_for("PILULA"),
     )

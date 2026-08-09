@@ -13,7 +13,14 @@ class SyntaxTheme:
     editor_fg: str
     selection_bg: str
     keywords: str
+    declarations: str
+    input_output: str
+    conditionals: str
+    loops: str
+    functions: str
+    entry_point: str
     booleans: str
+    word_operators: str
     strings: str
     comments: str
     numbers: str
@@ -33,7 +40,14 @@ DEFAULT_SYNTAX_THEMES: dict[str, SyntaxTheme] = {
         editor_fg="#d6deeb",
         selection_bg="#264f78",
         keywords="#7aa2f7",
-        booleans="#ff9e64",
+        declarations="#7aa2f7",
+        input_output="#2ac3de",
+        conditionals="#f7768e",
+        loops="#ff9e64",
+        functions="#bb9af7",
+        entry_point="#e0af68",
+        booleans="#9ece6a",
+        word_operators="#89ddff",
         strings="#9ece6a",
         comments="#6b7280",
         numbers="#bb9af7",
@@ -51,7 +65,14 @@ DEFAULT_SYNTAX_THEMES: dict[str, SyntaxTheme] = {
         editor_fg="#1f2937",
         selection_bg="#bfdbfe",
         keywords="#1d4ed8",
-        booleans="#c2410c",
+        declarations="#1d4ed8",
+        input_output="#0e7490",
+        conditionals="#be123c",
+        loops="#c2410c",
+        functions="#7e22ce",
+        entry_point="#92400e",
+        booleans="#15803d",
+        word_operators="#6d28d9",
         strings="#15803d",
         comments="#6b7280",
         numbers="#7e22ce",
@@ -77,6 +98,12 @@ class TongaSyntaxHighlighter:
 
     TOKEN_TAGS = (
         "keyword",
+        "declaration_keyword",
+        "input_output_keyword",
+        "conditional_keyword",
+        "loop_keyword",
+        "function_keyword",
+        "entry_point_keyword",
         "boolean",
         "native_function",
         "word_operator",
@@ -104,7 +131,9 @@ class TongaSyntaxHighlighter:
         self.font_size = font_size
         self.syntax_theme = DEFAULT_SYNTAX_THEMES[theme_name]
         self.custom_colors: dict[str, str] = {}
+        self.current_line_enabled = True
         self._error_line: int | None = None
+        self._error_span: tuple[str, str] | None = None
         self._after_id: str | None = None
 
         self._compile_regexes()
@@ -119,7 +148,21 @@ class TongaSyntaxHighlighter:
                 return None
             return re.compile(r"\b(?:" + "|".join(map(re.escape, words)) + r")\b")
 
-        self.re_keyword = words_pattern(self.profile.keywords)
+        categorized = {
+            *self.profile.declaration_words,
+            *self.profile.input_output_words,
+            *self.profile.conditional_words,
+            *self.profile.loop_words,
+            *self.profile.function_words,
+            *self.profile.entry_point_words,
+        }
+        self.re_keyword = words_pattern(tuple(word for word in self.profile.keywords if word not in categorized))
+        self.re_declaration = words_pattern(self.profile.declaration_words)
+        self.re_input_output = words_pattern(self.profile.input_output_words)
+        self.re_conditional = words_pattern(self.profile.conditional_words)
+        self.re_loop = words_pattern(self.profile.loop_words)
+        self.re_function_keyword = words_pattern(self.profile.function_words)
+        self.re_entry_point = words_pattern(self.profile.entry_point_words)
         self.re_boolean = words_pattern(self.profile.booleans)
         self.re_native = words_pattern(self.profile.native_functions)
         self.re_word_op = words_pattern(self.profile.word_operators)
@@ -142,6 +185,11 @@ class TongaSyntaxHighlighter:
         font_size: int | None = None,
         custom_colors: dict[str, str] | None = None,
     ) -> None:
+        # Reconfiguring fonts and spacing can otherwise move the viewport to
+        # the insertion cursor, which is especially disorienting when a
+        # learner switches themes while reviewing an error.
+        y_position = self.text.yview()[0]
+        x_position = self.text.xview()[0]
         self.theme_name = theme_name
         self.syntax_theme = DEFAULT_SYNTAX_THEMES[theme_name]
         if font_family is not None:
@@ -170,9 +218,15 @@ class TongaSyntaxHighlighter:
 
         color = self._color
         self.text.tag_configure("keyword", foreground=color("keywords"), font=bold_font)
+        self.text.tag_configure("declaration_keyword", foreground=color("declarations"), font=bold_font)
+        self.text.tag_configure("input_output_keyword", foreground=color("input_output"), font=bold_font)
+        self.text.tag_configure("conditional_keyword", foreground=color("conditionals"), font=bold_font)
+        self.text.tag_configure("loop_keyword", foreground=color("loops"), font=bold_font)
+        self.text.tag_configure("function_keyword", foreground=color("functions"), font=bold_font)
+        self.text.tag_configure("entry_point_keyword", foreground=color("entry_point"), font=bold_font)
         self.text.tag_configure("boolean", foreground=color("booleans"), font=bold_font)
         self.text.tag_configure("native_function", foreground=color("native_functions"), font=bold_font)
-        self.text.tag_configure("word_operator", foreground=color("operators"), font=bold_font)
+        self.text.tag_configure("word_operator", foreground=color("word_operators"), font=bold_font)
         self.text.tag_configure("string", foreground=color("strings"))
         self.text.tag_configure("number", foreground=color("numbers"))
         self.text.tag_configure("comment", foreground=color("comments"), font=italic_font)
@@ -182,8 +236,26 @@ class TongaSyntaxHighlighter:
         self.text.tag_configure("brace", foreground=color("braces"), font=bold_font)
         self.text.tag_configure("current_line", background=color("current_line"))
         self.text.tag_configure("error_line", background=color("error_line"))
+        self.text.tag_configure("error_range", background=color("error_line"), underline=True)
+        for tag in (
+            "identifier",
+            "function_name",
+            "keyword",
+            "declaration_keyword",
+            "input_output_keyword",
+            "conditional_keyword",
+            "loop_keyword",
+            "function_keyword",
+            "boolean",
+            "word_operator",
+            "native_function",
+            "entry_point_keyword",
+        ):
+            self.text.tag_raise(tag)
         self.highlight()
         self.highlight_current_line()
+        self.text.yview_moveto(y_position)
+        self.text.xview_moveto(x_position)
 
     def update_color(self, color_key: str, value: str) -> None:
         self.custom_colors[color_key] = value
@@ -233,6 +305,12 @@ class TongaSyntaxHighlighter:
             (self.re_number, "number"),
             (self.re_function_name, "function_name"),
             (self.re_keyword, "keyword"),
+            (self.re_declaration, "declaration_keyword"),
+            (self.re_input_output, "input_output_keyword"),
+            (self.re_conditional, "conditional_keyword"),
+            (self.re_loop, "loop_keyword"),
+            (self.re_function_keyword, "function_keyword"),
+            (self.re_entry_point, "entry_point_keyword"),
             (self.re_boolean, "boolean"),
             (self.re_native, "native_function"),
             (self.re_word_op, "word_operator"),
@@ -248,12 +326,18 @@ class TongaSyntaxHighlighter:
 
     def highlight_current_line(self) -> None:
         self.text.tag_remove("current_line", "1.0", "end")
+        if not self.current_line_enabled:
+            return
         try:
             insert_index = self.text.index("insert")
             self.text.tag_add("current_line", f"{insert_index} linestart", f"{insert_index} lineend +1c")
             self.text.tag_lower("current_line")
         except tk.TclError:
             return
+
+    def set_current_line_enabled(self, enabled: bool) -> None:
+        self.current_line_enabled = bool(enabled)
+        self.highlight_current_line()
 
     def highlight_error_line(self, line_number: int) -> None:
         self.clear_error_highlight()
@@ -264,9 +348,22 @@ class TongaSyntaxHighlighter:
         except tk.TclError:
             return
 
+    def highlight_error_span(self, start: str, end: str) -> None:
+        self.clear_error_highlight()
+        try:
+            if self.text.compare(start, "==", end):
+                end = f"{start} +1c"
+            self.text.tag_add("error_range", start, end)
+            self.text.see(start)
+            self._error_span = (start, end)
+        except tk.TclError:
+            return
+
     def clear_error_highlight(self) -> None:
         self.text.tag_remove("error_line", "1.0", "end")
+        self.text.tag_remove("error_range", "1.0", "end")
         self._error_line = None
+        self._error_span = None
 
     def _tag_range(self, tag: str, start: int, end: int) -> None:
         self.text.tag_add(tag, f"1.0+{start}c", f"1.0+{end}c")

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 
 class TongaLangError(Exception):
@@ -25,6 +25,7 @@ class TongaLangError(Exception):
         code: str = "TL000",
         category_tonga: str = "Mulubizyo wa TongaLang",
         category_english: str = "TongaLang error",
+        details: Optional[dict[str, Any]] = None,
     ):
         self.tonga_message = tonga_message
         self.english_message = english_message
@@ -35,8 +36,19 @@ class TongaLangError(Exception):
         self.code = code
         self.category_tonga = category_tonga
         self.category_english = category_english
+        self.details = dict(details or {})
 
         super().__init__(self.format_message())
+
+    def to_diagnostic(self, source: str = ""):
+        """Return the structured diagnostic used by the IDE.
+
+        The import stays local so the legacy error module remains usable by
+        the lexer and parser without creating an import cycle.
+        """
+        from .diagnostics import diagnostic_from_error
+
+        return diagnostic_from_error(self, source)
 
     def format_message(self, mode: str = "bilingual", source: str | None = None) -> str:
         """
@@ -124,7 +136,13 @@ class TongaRuntimeError(TongaLangError):
 
 
 class UndefinedVariableError(TongaRuntimeError):
-    def __init__(self, name: str, line: int | None = None, column: int | None = None):
+    def __init__(
+        self,
+        name: str,
+        line: int | None = None,
+        column: int | None = None,
+        candidates: tuple[str, ...] = (),
+    ):
         super().__init__(
             tonga_message=f'Kunyina izina lya "{name}".',
             english_message=f'There is no variable named "{name}".',
@@ -133,6 +151,7 @@ class UndefinedVariableError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R101",
+            details={"name": name, "candidates": tuple(candidates)},
         )
 
 
@@ -146,6 +165,7 @@ class VariableAlreadyDeclaredError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R102",
+            details={"name": name},
         )
 
 
@@ -179,6 +199,7 @@ class TypeMismatchError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R104",
+            details={"operation": operation, "left_type": left_type, "right_type": right_type},
         )
 
 
@@ -222,7 +243,13 @@ class ReturnOutsideFunctionError(TongaRuntimeError):
 
 
 class FunctionNotDefinedError(TongaRuntimeError):
-    def __init__(self, name: str, line: int | None = None, column: int | None = None):
+    def __init__(
+        self,
+        name: str,
+        line: int | None = None,
+        column: int | None = None,
+        candidates: tuple[str, ...] = (),
+    ):
         super().__init__(
             tonga_message=f'Mulimo "{name}" tauzibikidwe.',
             english_message=f'Function "{name}" is not defined.',
@@ -231,6 +258,7 @@ class FunctionNotDefinedError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R108",
+            details={"name": name, "candidates": tuple(candidates)},
         )
 
 
@@ -251,6 +279,7 @@ class WrongArgumentCountError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R109",
+            details={"name": name, "expected": expected, "received": received},
         )
 
 
@@ -267,6 +296,7 @@ class MainFunctionMissingError(TongaRuntimeError):
             hint_tonga=hint_tonga,
             hint_english=hint_english,
             code="TL-R110",
+            details={"suggestion": suggestion},
         )
 
 
@@ -280,6 +310,7 @@ class LoopLimitExceededError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R111",
+            details={"limit": limit},
         )
 
 
@@ -293,6 +324,7 @@ class ConversionError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R112",
+            details={"value": value, "target": target},
         )
 
 
@@ -319,6 +351,7 @@ class CallDepthExceededError(TongaRuntimeError):
             line=line,
             column=column,
             code="TL-R114",
+            details={"limit": limit},
         )
 
 
@@ -332,6 +365,21 @@ class InvalidConfigurationError(TongaRuntimeError):
             code="TL-C101",
             category_tonga="Mulubizyo wampango",
             category_english="Configuration error",
+            details={"setting": setting, "value": value},
+        )
+
+
+class SourceNotFoundError(TongaLangError):
+    def __init__(self, path: object):
+        super().__init__(
+            tonga_message=f'Fayilo "{path}" taiyajanika.',
+            english_message=f'Source file "{path}" was not found.',
+            hint_tonga="Bona kuti nzila aizina lyafayilo zyalembwa kabotu.",
+            hint_english="Check that the file path and file name are correct.",
+            code="TL-F101",
+            category_tonga="Mulubizyo wafayilo",
+            category_english="Source-file error",
+            details={"path": str(path)},
         )
 
 
@@ -345,6 +393,7 @@ class SourceEncodingError(TongaLangError):
             code="TL-F102",
             category_tonga="Mulubizyo wafayilo",
             category_english="Source-file error",
+            details={"path": str(path)},
         )
 
 
@@ -358,4 +407,19 @@ class SourceReadError(TongaLangError):
             code="TL-F103",
             category_tonga="Mulubizyo wafayilo",
             category_english="Source-file error",
+            details={"path": str(path), "reason": reason},
+        )
+
+
+class SourceWriteError(TongaLangError):
+    def __init__(self, path: object, reason: str):
+        super().__init__(
+            tonga_message=f'Fayilo "{path}" taisungiki.',
+            english_message=f'Source file "{path}" could not be saved: {reason}',
+            hint_tonga="Bona nzila yafayilo, luzumizyo, akuti fayilo tiikazikkidwe.",
+            hint_english="Check the folder, file permissions, and whether another program has locked the file.",
+            code="TL-F104",
+            category_tonga="Mulubizyo wafayilo",
+            category_english="Source-file error",
+            details={"path": str(path), "reason": reason},
         )

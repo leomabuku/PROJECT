@@ -33,39 +33,54 @@ class Environment:
 
         self.values[key] = value
 
-    def assign(self, name: str, value: Any, line: int | None = None, column: int | None = None) -> None:
+    def assign(
+        self,
+        name: str,
+        value: Any,
+        line: int | None = None,
+        column: int | None = None,
+        _candidates: tuple[str, ...] | None = None,
+    ) -> None:
         """
         Assign to an existing variable.
 
         Search starts from the current scope and moves upward.
         """
         key = name.lower()
+        candidates = _candidates if _candidates is not None else tuple(self.snapshot())
 
         if key in self.values:
             self.values[key] = value
             return
 
         if self.parent is not None:
-            self.parent.assign(name, value, line=line, column=column)
+            self.parent.assign(name, value, line=line, column=column, _candidates=candidates)
             return
 
-        raise UndefinedVariableError(name, line=line, column=column)
+        raise UndefinedVariableError(name, line=line, column=column, candidates=candidates)
 
-    def get(self, name: str, line: int | None = None, column: int | None = None) -> Any:
+    def get(
+        self,
+        name: str,
+        line: int | None = None,
+        column: int | None = None,
+        _candidates: tuple[str, ...] | None = None,
+    ) -> Any:
         """
         Get a variable value.
 
         Search starts from the current scope and moves upward.
         """
         key = name.lower()
+        candidates = _candidates if _candidates is not None else tuple(self.snapshot())
 
         if key in self.values:
             return self.values[key]
 
         if self.parent is not None:
-            return self.parent.get(name, line=line, column=column)
+            return self.parent.get(name, line=line, column=column, _candidates=candidates)
 
-        raise UndefinedVariableError(name, line=line, column=column)
+        raise UndefinedVariableError(name, line=line, column=column, candidates=candidates)
 
     def exists_in_current_scope(self, name: str) -> bool:
         """
