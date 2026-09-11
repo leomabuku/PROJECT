@@ -1,5 +1,16 @@
 # TongaLang Project Changelog
 
+## 11 September 2026
+
+### Installable desktop distribution
+
+- Added the selected TongaLang logo throughout the IDE, About screen, executable, Windows installer and uninstaller, shortcuts, Installed Apps entry, Linux launcher, and repository documentation.
+- Added a per-user Windows setup executable with Start Menu and optional Desktop shortcuts, Installed Apps registration, bundled examples and a dedicated uninstaller.
+- Added a reproducible PowerShell build that packages the IDE with PyInstaller, compiles the Windows setup/uninstaller with the built-in .NET Framework tools, and produces a SHA-256 checksum.
+- Added Linux source-install and standalone-build scripts plus distribution-specific Tkinter prerequisites and troubleshooting guidance.
+- Documented the unsigned-build SmartScreen notice so learners can make an informed installation decision without disabling security software.
+- Ran the installer end to end on Windows, launched the installed IDE, and captured a privacy-reviewed gallery covering setup, editing, diagnostics, input and output, settings, AST, console, grammar, About, and both themes.
+
 ## 9 August 2026
 
 ### Beginner guidance and recovery

@@ -1,8 +1,25 @@
 # TongaLang
 
+<img src="assets/branding/tongalang-logo.png" alt="TongaLang logo" width="128">
+
 TongaLang is a minimal interpreted educational programming language using
 Tonga-derived keywords. It is built in Python with PLY and is designed for
 beginner programming education at The Copperbelt University.
+
+## Download and Install
+
+Windows users can download the current installer from the
+[latest GitHub release](https://github.com/leomabuku/PROJECT/releases/latest):
+
+- `TongaLang-Setup-0.2.0.exe` installs the IDE for the current user without
+  administrator access.
+- `TongaLang-Setup-0.2.0.exe.sha256` allows the download to be verified before
+  it is opened.
+
+The release is not yet digitally code-signed, so Windows SmartScreen may ask
+for confirmation. Linux source installation, native Linux builds, Windows
+builds, uninstalling and checksum verification are explained in the
+[installation guide](docs/INSTALLATION.md).
 
 The language intentionally keeps a small surface area:
 
@@ -14,13 +31,17 @@ The language intentionally keeps a small surface area:
 
 ## Latest Project Evidence
 
-Updated **9 August 2026**. The current build adds side-effect-free beginner
-diagnostics, guarded one-click fixes, semantic keyword colours, and a shared
-Problems/Program Input dock while retaining the source-linked AST explorer and
-failure-discovery Test Lab. The complete automated suite contains 179 passing
-tests.
+Updated **11 September 2026**. The current build adds side-effect-free beginner
+diagnostics, guarded one-click fixes, semantic keyword colours, a shared
+Problems/Program Input dock, and an installable Windows edition while retaining
+the source-linked AST explorer and failure-discovery Test Lab. The complete
+automated suite contains 179 passing tests.
 
 ![TongaLang source editor](docs/media/source-editor.png)
+
+| Windows setup | Completed input transcript |
+| --- | --- |
+| ![TongaLang Windows installer](docs/media/installer-setup.png) | ![TongaLang output including the submitted program input](docs/media/output-transcript.png) |
 
 | Guided Problems and safe fixes | Program Input beside live output |
 | --- | --- |
@@ -33,6 +54,13 @@ tests.
 | AST explorer | Failure-discovery Test Lab |
 | --- | --- |
 | ![Source-linked TongaLang AST explorer](docs/media/ast-explorer.png) | ![TongaLang Test Lab with all checks passing](docs/media/test-lab.png) |
+
+| Console and grammar reference | Light theme |
+| --- | --- |
+| ![TongaLang internal console](docs/media/console.png)<br>![Generated TongaLang grammar reference](docs/media/grammar.png) | ![TongaLang semantic editor in the light theme](docs/media/light-theme.png) |
+
+The [complete screenshot gallery](docs/media) also includes the expanded
+semantic-colour settings and the lower sections of the scrollable About guide.
 
 [Watch the 52-second, captioned TongaLang IDE walkthrough](docs/media/tongalang-demo.mp4).
 The silent H.264 recording is 1280×720 and remains under 8 MB for fast playback
@@ -259,6 +287,7 @@ The GUI is designed for project demonstrations and includes:
 - Back and Forward history plus a collapsible navigation sidebar
 - Dedicated Editor, Output, AST, Console, Settings, Grammar, and About views
 - Interactive pause/resume input for `bala()` with submitted values echoed into Output
+- Consistent TongaLang branding across the IDE, packaged application, installer, and desktop shortcuts
 - A zoomable, pannable AST diagram with visible parent-child connectors, colour-coded node roles, source links, search, and an accessible outline
 - Internal console logs for tokenizing, parsing, AST generation, execution, input, and errors
 - Scrollable, grouped Settings and About pages with mouse-wheel, touchpad, and keyboard scrolling
@@ -579,25 +608,16 @@ XML, console output, and coverage data under `test-results/`. See
 `docs/TESTING_AND_FAILURE_DISCOVERY.md` for the testing method and how to
 interpret the metrics.
 
-## Windows Packaging
+## Desktop Packaging
 
-Install dependencies first:
+The repository includes a reproducible Windows setup build, a Linux user
+installer and a native Linux bundle build. See the
+[complete installation and build guide](docs/INSTALLATION.md).
 
-```powershell
-pip install -r requirements.txt
-```
-
-Build the CLI runner:
+Build the Windows installer with:
 
 ```powershell
-pyinstaller --onefile --name tongalang main.py
+.\distribution\windows\build_installer.ps1
 ```
 
-Build the GUI:
-
-```powershell
-pyinstaller --onefile --windowed --name TongaLangGUI gui/app.py
-```
-
-Build output is written to `dist/`. PyInstaller temporary output and `.spec`
-files are ignored by default.
+The final setup executable and SHA-256 checksum are written to `dist/`.
