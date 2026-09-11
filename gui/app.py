@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 import queue
+import sys
 import threading
 import time
 import tkinter as tk
@@ -129,6 +130,15 @@ AVAILABLE_EDITOR_FONTS = (
     "Lucida Console",
     "Segoe UI Mono",
 )
+
+
+def application_asset_path(*parts: str) -> Path:
+    """Resolve bundled assets from source checkouts and PyInstaller builds."""
+    if getattr(sys, "frozen", False):
+        base = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
+    else:
+        base = Path(__file__).resolve().parents[1]
+    return base.joinpath(*parts)
 
 
 class ScrollableFrame(tk.Frame):
@@ -259,6 +269,7 @@ class TongaLangGUI:
         self.root.title("TongaLang Educational IDE")
         self.root.geometry("1280x760")
         self.root.minsize(980, 620)
+        self._load_brand_images()
 
         self._build_ui()
         self._bind_shortcuts()
@@ -271,6 +282,23 @@ class TongaLangGUI:
     # ========================================================
     # UI Construction
     # ========================================================
+
+    def _load_brand_images(self) -> None:
+        """Load each UI-sized logo once and apply the Windows/Linux window icon."""
+        self.brand_images: dict[int, tk.PhotoImage] = {}
+        for size in (32, 64, 128):
+            path = application_asset_path("assets", "branding", f"tongalang-logo-{size}.png")
+            try:
+                self.brand_images[size] = tk.PhotoImage(file=str(path))
+            except tk.TclError:
+                continue
+        available_icons = [self.brand_images[size] for size in (32, 64, 128) if size in self.brand_images]
+        if available_icons:
+            try:
+                self.root.iconphoto(True, *available_icons)
+            except tk.TclError:
+                # Some minimal display servers cannot apply a window icon.
+                pass
 
     def _build_ui(self) -> None:
         self.root.columnconfigure(1, weight=1)
@@ -332,10 +360,14 @@ class TongaLangGUI:
         self.switch_view("Editor")
 
     def _build_sidebar(self) -> None:
-        title = tk.Label(self.sidebar, text="TongaLang", font=("Segoe UI", 15, "bold"), anchor="w")
-        title.pack(fill="x", padx=14, pady=(14, 6))
-        subtitle = tk.Label(self.sidebar, text="Interpreter IDE", anchor="w")
-        subtitle.pack(fill="x", padx=14, pady=(0, 12))
+        brand = tk.Frame(self.sidebar)
+        brand.pack(fill="x", padx=14, pady=(14, 12))
+        if 32 in self.brand_images:
+            tk.Label(brand, image=self.brand_images[32], bd=0).pack(side="left", padx=(0, 9))
+        brand_text = tk.Frame(brand)
+        brand_text.pack(side="left", fill="x", expand=True)
+        tk.Label(brand_text, text="TongaLang", font=("Segoe UI", 15, "bold"), anchor="w").pack(fill="x")
+        tk.Label(brand_text, text="Interpreter IDE", anchor="w").pack(fill="x")
 
         for view in ("Editor", "Settings", "About"):
             button = tk.Button(
@@ -755,7 +787,14 @@ class TongaLangGUI:
         frame = self._new_view("About")
         frame.rowconfigure(1, weight=1)
         frame.columnconfigure(0, weight=1)
-        tk.Label(frame, text="About TongaLang", font=("Segoe UI", 15, "bold")).grid(row=0, column=0, sticky="w", padx=14, pady=(12, 8))
+        header = tk.Frame(frame)
+        header.grid(row=0, column=0, sticky="ew", padx=14, pady=(12, 8))
+        if 64 in self.brand_images:
+            tk.Label(header, image=self.brand_images[64], bd=0).pack(side="left", padx=(0, 10))
+        heading = tk.Frame(header)
+        heading.pack(side="left", fill="x", expand=True)
+        tk.Label(heading, text="About TongaLang", font=("Segoe UI", 15, "bold"), anchor="w").pack(fill="x")
+        tk.Label(heading, text="Learn programming with familiar language.", anchor="w").pack(fill="x")
         self.about_scroll = ScrollableFrame(frame)
         self.about_scroll.grid(row=1, column=0, sticky="nsew", padx=14, pady=(0, 14))
         body = self.about_scroll.body
